@@ -12,7 +12,7 @@ static Token make_token(Lexer *lexer, TokenType type, const char *start) {
 void init_lexer(Lexer *lexer, const char *source) { lexer->cur = source; }
 
 Token lexer_next(Lexer *lexer) {
-	// skip whitespace and `//` comments until we hit a real token
+	// detect and skip whitespace and `//` comments until we hit a real token
 	for (;;) {
 		char c = *lexer->cur;
 		if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
@@ -26,16 +26,21 @@ Token lexer_next(Lexer *lexer) {
 			break;
 		}
 	}
+
 	const char *start = lexer->cur;
+
 	// detect end of file
 	if (*lexer->cur == '\0')
 		return make_token(lexer, TOKEN_EOF, start);
 
+	// detect and make_token number
 	if (is_digit(*lexer->cur)) {
 		while (is_digit(*lexer->cur))
 			lexer->cur++;
 		return make_token(lexer, TOKEN_NUMBER, start);
 	}
+
+	// detect and make_token words
 	if (is_alpha(*lexer->cur)) {
 		while (is_alpha(*lexer->cur))
 			lexer->cur++;
@@ -44,6 +49,15 @@ Token lexer_next(Lexer *lexer) {
 		}
 		return make_token(lexer, TOKEN_ERROR, start);
 	}
-	lexer->cur++;
+
+	// detect and make_token for everything else as anything left here onwards
+	// is a single char
+	char c = *lexer->cur++;
+	switch (c) {
+	case '+':
+		return make_token(lexer, TOKEN_PLUS, start);
+	case '-':
+		return make_token(lexer, TOKEN_MINUS, start);
+	}
 	return make_token(lexer, TOKEN_ERROR, start);
 }
