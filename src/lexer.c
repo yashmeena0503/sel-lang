@@ -18,7 +18,18 @@ void init_lexer(Lexer *lexer, const char *source) {
 }
 
 Token lexer_next(Lexer *lexer) {
-  while (*lexer->cur == ' ' || *lexer->cur == '\t' || *lexer->cur == '\n' || *lexer->cur == '\r') lexer->cur++;
+  // skip whitespace and `//` comments until we hit a real token
+  for (;;) {
+    char c = *lexer->cur;
+    if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
+      lexer->cur++;
+    } else if (c == '/' && lexer->cur[1] == '/') {
+      // stop at '\n' (the whitespace branch eats it) or '\0' (comment at EOF)
+      while (*lexer->cur != '\0' && *lexer->cur != '\n') lexer->cur++;
+    } else {
+      break;
+    }
+  }
   const char *start = lexer->cur;
   // detect end of file
   if (*lexer->cur == '\0') return make_token(lexer, TOKEN_EOF, start);

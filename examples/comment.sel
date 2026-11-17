@@ -1,0 +1,3 @@
+// leading comment
+ret 7 // trailing comment
+// comment at EOF
