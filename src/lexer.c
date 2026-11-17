@@ -58,6 +58,10 @@ Token lexer_next(Lexer *lexer) {
 		return make_token(lexer, TOKEN_PLUS, start);
 	case '-':
 		return make_token(lexer, TOKEN_MINUS, start);
+	case '*':
+		return make_token(lexer, TOKEN_STAR, start);
+	case '/': // a lone '/'; "//" was already consumed as a comment above
+		return make_token(lexer, TOKEN_SLASH, start);
 	}
 	return make_token(lexer, TOKEN_ERROR, start);
 }

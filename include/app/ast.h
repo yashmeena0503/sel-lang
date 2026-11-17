@@ -5,6 +5,8 @@ typedef enum {
 	NODE_NUMBER,
 	NODE_ADD,
 	NODE_SUB,
+	NODE_MUL,
+	NODE_DIV,
 } NodeKind;
 
 // the struct contains pointers to itself, so it needs this forward typedef

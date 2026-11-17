@@ -4,7 +4,7 @@ SRC_DIR := src
 INCLUDE_DIR := include
 
 CC := gcc
-CFLAGS := -std=c11 -Wall -Wextra -g -I$(INCLUDE_DIR)
+CFLAGS := -std=c11 -Wall -Wswitch -Wextra -g -I$(INCLUDE_DIR)
 DEPFLAGS := -MMD -MP
 
 SRCS := $(wildcard $(SRC_DIR)/*.c)

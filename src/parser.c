@@ -24,14 +24,26 @@ static Node *number(void) {
 	return new_number(strtol(t.start, NULL, 10));
 }
 
-// expr = number (("+" | "-") number)*
-static Node *expr(void) {
+// term = number (("*" | "/") number)*
+static Node *term(void) {
 	Node *node = number();
+	while (g_token.type == TOKEN_STAR || g_token.type == TOKEN_SLASH) {
+		NodeKind kind = g_token.type == TOKEN_STAR ? NODE_MUL : NODE_DIV;
+		advance();
+		node = new_binary(kind, node, number());
+	}
+	return node;
+}
+
+// expr = term (("+" | "-") term)*
+// same loop as term, but its operands are terms, so `*` binds tighter
+static Node *expr(void) {
+	Node *node = term();
 	while (g_token.type == TOKEN_PLUS || g_token.type == TOKEN_MINUS) {
 		NodeKind kind = g_token.type == TOKEN_PLUS ? NODE_ADD : NODE_SUB;
 		advance();
 		// the tree so far becomes the left child of the new node
-		node = new_binary(kind, node, number());
+		node = new_binary(kind, node, term());
 	}
 	return node;
 }
