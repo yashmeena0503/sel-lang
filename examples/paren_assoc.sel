@@ -1,0 +1,2 @@
+// parens override left-associativity: 10 - (3 - 2), not (10 - 3) - 2
+ret 10 - (3 - 2)

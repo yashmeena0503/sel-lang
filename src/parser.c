@@ -24,13 +24,28 @@ static Node *number(void) {
 	return new_number(strtol(t.start, NULL, 10));
 }
 
-// term = number (("*" | "/") number)*
+// primary -> expr -> term -> primary is a cycle, so expr needs a forward decl
+static Node *expr(void);
+
+// primary = NUMBER | "(" expr ")"
+// the inner expr is parsed fully and returned as one resulting node
+static Node *primary(void) {
+	if (g_token.type == TOKEN_LPAREN) {
+		advance();
+		Node *node = expr();
+		expect(TOKEN_RPAREN, "expected ')'");
+		return node;
+	}
+	return number();
+}
+
+// term = primary (("*" | "/") primary)*
 static Node *term(void) {
-	Node *node = number();
+	Node *node = primary();
 	while (g_token.type == TOKEN_STAR || g_token.type == TOKEN_SLASH) {
 		NodeKind kind = g_token.type == TOKEN_STAR ? NODE_MUL : NODE_DIV;
 		advance();
-		node = new_binary(kind, node, number());
+		node = new_binary(kind, node, primary());
 	}
 	return node;
 }
