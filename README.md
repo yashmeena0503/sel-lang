@@ -55,13 +55,15 @@ Linux x86-64, `gcc`, `make`, and GNU `as` / `ld` (binutils). `clang-format` is o
 ```
 program = "ret" expr EOF
 expr    = term (("+" | "-") term)*
-term    = primary (("*" | "/") primary)*
+term    = unary (("*" | "/") unary)*
+unary   = "-" unary | primary
 primary = NUMBER | "(" expr ")"
 ```
 
 - `+ - * /` on integers, with `*` and `/` binding tighter than `+` and `-`
 - All operators are left-associative (`10 - 3 - 2` is `5`)
 - `( )` group sub-expressions and override precedence
+- unary minus: `-x`, `- -x`, `-(1 + 2)`
 - `//` line comments
 
 ## How it works

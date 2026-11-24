@@ -5,6 +5,12 @@ void gen_expr(FILE *out, Node *node) {
 		fprintf(out, "    mov $%ld, %%rax\n", node->value);
 		return;
 	}
+	// one child, so no push/pop: compute it into rax, then flip the sign in place
+	if (node->kind == NODE_NEG) {
+		gen_expr(out, node->lhs);
+		fprintf(out, "    neg %%rax\n");
+		return;
+	}
 	gen_expr(out, node->lhs);
 	// the rhs code overwrites rax, so the stack holds lhs meanwhile.
     // The stack (not a register) because nesting depth is unbounded
@@ -30,7 +36,8 @@ void gen_expr(FILE *out, Node *node) {
             fprintf(out, "    cqo\n");
             fprintf(out, "    idiv %%rcx\n");
             break;
-        case NODE_NUMBER: // handled above; listed so -Wswitch shuts up
+        case NODE_NUMBER: // NUMBER and NEG are handled above;
+        case NODE_NEG:    // listed so -Wswitch shuts up
             break;
     }
 }

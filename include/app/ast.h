@@ -7,6 +7,7 @@ typedef enum {
 	NODE_SUB,
 	NODE_MUL,
 	NODE_DIV,
+	NODE_NEG,
 } NodeKind;
 
 // the struct contains pointers to itself, so it needs this forward typedef
@@ -15,11 +16,12 @@ typedef struct Node Node;
 struct Node {
 	NodeKind kind;
 	long value; // NODE_NUMBER only
-	Node *lhs;  // NODE_ADD / NODE_SUB only
+	Node *lhs;  // binary kinds; NODE_NEG uses lhs only (its operand)
 	Node *rhs;
 };
 
 Node *new_number(long value);
 Node *new_binary(NodeKind kind, Node *lhs, Node *rhs);
+Node *new_unary(NodeKind kind, Node *operand);
 
 #endif

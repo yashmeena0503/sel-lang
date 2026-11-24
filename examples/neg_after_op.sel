@@ -1,0 +1,2 @@
+// binary minus followed by unary minus: 10 - (-3)
+ret 10 - -3

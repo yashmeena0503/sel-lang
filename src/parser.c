@@ -39,13 +39,24 @@ static Node *primary(void) {
 	return number();
 }
 
-// term = primary (("*" | "/") primary)*
+// unary = "-" unary | primary
+// a prefix rule: it calls itself after eating the "-", so `- - 4` becomes neg(neg(4))
+// it sits below term, so `-2 * 3` is `(-2) * 3`
+static Node *unary(void) {
+	if (g_token.type == TOKEN_MINUS) {
+		advance();
+		return new_unary(NODE_NEG, unary());
+	}
+	return primary();
+}
+
+// term = unary (("*" | "/") unary)*
 static Node *term(void) {
-	Node *node = primary();
+	Node *node = unary();
 	while (g_token.type == TOKEN_STAR || g_token.type == TOKEN_SLASH) {
 		NodeKind kind = g_token.type == TOKEN_STAR ? NODE_MUL : NODE_DIV;
 		advance();
-		node = new_binary(kind, node, primary());
+		node = new_binary(kind, node, unary());
 	}
 	return node;
 }

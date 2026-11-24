@@ -17,3 +17,11 @@ Node *new_binary(NodeKind kind, Node *lhs, Node *rhs) {
 	node->rhs = rhs;
 	return node;
 }
+
+// one child, stored in lhs; rhs stays NULL thanks to calloc
+Node *new_unary(NodeKind kind, Node *operand) {
+	Node *node = calloc(1, sizeof(Node));
+	node->kind = kind;
+	node->lhs = operand;
+	return node;
+}
